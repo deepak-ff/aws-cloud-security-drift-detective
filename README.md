@@ -100,7 +100,7 @@ High – SSH Open to Internet (0.0.0.0/0)
 ##Screenshots
 
 Screenshot 1 – IAM Detection
-<img width="1483" height="512" alt="image" src="https://github.com/user-attachments/assets/9e0a8faa-703c-441e-8647-db68c0d4292b" />
+<img width="1490" height="387" alt="image" src="https://github.com/user-attachments/assets/f803ab4b-a019-4a54-9941-5313f72eae29" />
 
 
 Screenshot 2 – Security Group Detection
@@ -110,7 +110,8 @@ Screenshot 2 – Security Group Detection
 
 Screenshot 3 – Full Output
 
-<img width="1490" height="387" alt="image" src="https://github.com/user-attachments/assets/f803ab4b-a019-4a54-9941-5313f72eae29" />
+<img width="1610" height="893" alt="image" src="https://github.com/user-attachments/assets/998ced7f-f746-4b14-b324-75d03a255223" />
+
 
 
 ## Author
