@@ -65,6 +65,54 @@ High – SSH Open to Internet (0.0.0.0/0)
 * CloudTrail Tampering Detection
 * HTML Security Dashboard
 
+##Architecture Diagram
+
+┌─────────────┐
+│ AWS Changes │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│ CloudTrail  │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│ EventBridge │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│ AWS Lambda  │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│ Detection   │
+│ Engine      │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│ SNS Alerts  │
+└─────────────┘
+
+##Screenshots
+
+Screenshot 1 – IAM Detection
+<img width="1483" height="512" alt="image" src="https://github.com/user-attachments/assets/9e0a8faa-703c-441e-8647-db68c0d4292b" />
+
+
+Screenshot 2 – Security Group Detection
+
+<img width="1483" height="512" alt="image" src="https://github.com/user-attachments/assets/4ff6d43c-3cca-4926-9697-5a0f297bc95a" />
+
+
+Screenshot 3 – Full Output
+
+<img width="1490" height="387" alt="image" src="https://github.com/user-attachments/assets/f803ab4b-a019-4a54-9941-5313f72eae29" />
+
+
 ## Author
 
 Deepak Sundhar B
