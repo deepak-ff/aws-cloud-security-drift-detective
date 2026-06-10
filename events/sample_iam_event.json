@@ -1,0 +1,25 @@
+{
+  "version": "0",
+  "id": "test-iam-event-001",
+  "detail-type": "AWS API Call via CloudTrail",
+  "source": "aws.iam",
+  "account": "123456789012",
+  "time": "2026-06-09T10:30:00Z",
+  "region": "us-east-1",
+  "detail": {
+    "eventVersion": "1.09",
+    "eventSource": "iam.amazonaws.com",
+    "eventName": "AttachUserPolicy",
+    "eventTime": "2026-06-09T10:30:00Z",
+    "awsRegion": "us-east-1",
+    "recipientAccountId": "123456789012",
+    "userIdentity": {
+      "type": "IAMUser",
+      "arn": "arn:aws:iam::123456789012:user/admin-user"
+    },
+    "requestParameters": {
+      "userName": "developer-john",
+      "policyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+    }
+  }
+}

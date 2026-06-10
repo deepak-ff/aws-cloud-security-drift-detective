@@ -1,0 +1,4 @@
+# Local development and testing only
+# Lambda uses only boto3 (included in AWS runtime)
+
+boto3>=1.34.0

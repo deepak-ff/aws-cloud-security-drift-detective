@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+*.zip
+venv/
+.venv/
+.aws-sam/
+reports/*.json

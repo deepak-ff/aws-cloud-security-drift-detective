@@ -1,0 +1,35 @@
+{
+  "version": "0",
+  "id": "test-s3-event-001",
+  "detail-type": "AWS API Call via CloudTrail",
+  "source": "aws.s3",
+  "account": "123456789012",
+  "time": "2026-06-09T11:00:00Z",
+  "region": "us-east-1",
+  "detail": {
+    "eventVersion": "1.09",
+    "eventSource": "s3.amazonaws.com",
+    "eventName": "PutBucketPolicy",
+    "eventTime": "2026-06-09T11:00:00Z",
+    "awsRegion": "us-east-1",
+    "recipientAccountId": "123456789012",
+    "userIdentity": {
+      "type": "IAMUser",
+      "arn": "arn:aws:iam::123456789012:user/devops-user"
+    },
+    "requestParameters": {
+      "bucketName": "company-sensitive-data",
+      "bucketPolicy": {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::company-sensitive-data/*"
+          }
+        ]
+      }
+    }
+  }
+}

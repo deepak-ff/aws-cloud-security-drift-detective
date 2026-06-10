@@ -1,0 +1,170 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  AWS Cloud Security Drift Detective — monitors IAM, S3, and Security Group
+  changes via CloudTrail + EventBridge + Lambda + SNS.
+
+Parameters:
+  AlertEmail:
+    Type: String
+    Description: Email address to receive security drift alerts
+    AllowedPattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
+    ConstraintDescription: Must be a valid email address
+
+Resources:
+  # ── S3 bucket for JSON security reports ──────────────────────────
+  ReportsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: Project
+          Value: DriftDetective
+
+  # ── SNS topic for email alerts ───────────────────────────────────
+  SecurityAlertTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: AWS Security Drift Alerts
+      TopicName: security-drift-alerts
+
+  EmailSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref SecurityAlertTopic
+      Protocol: email
+      Endpoint: !Ref AlertEmail
+
+  # ── IAM role for Lambda ──────────────────────────────────────────
+  DriftDetectorRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: drift-detective-lambda-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: DriftDetectorPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sns:Publish
+                Resource: !Ref SecurityAlertTopic
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                Resource: !Sub "${ReportsBucket.Arn}/*"
+
+  # ── Lambda function ─────────────────────────────────────────────
+  DriftDetectorFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: security-drift-detector
+      Runtime: python3.11
+      Handler: handler.lambda_handler
+      Role: !GetAtt DriftDetectorRole.Arn
+      Timeout: 30
+      MemorySize: 256
+      Environment:
+        Variables:
+          SNS_TOPIC_ARN: !Ref SecurityAlertTopic
+          REPORTS_BUCKET: !Ref ReportsBucket
+      Code:
+        ZipFile: |
+          # Placeholder — deploy real code via scripts/deploy.ps1
+          def lambda_handler(event, context):
+              return {"status": "deploy real code via deploy script"}
+
+  # ── EventBridge rule for CloudTrail events ───────────────────────
+  DriftDetectionRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: security-drift-detection-rule
+      Description: Detect risky IAM, S3, and Security Group changes
+      EventPattern:
+        source:
+          - aws.iam
+          - aws.s3
+          - aws.ec2
+        detail-type:
+          - AWS API Call via CloudTrail
+        detail:
+          eventSource:
+            - iam.amazonaws.com
+            - s3.amazonaws.com
+            - ec2.amazonaws.com
+          eventName:
+            - AttachUserPolicy
+            - AttachGroupPolicy
+            - PutUserPolicy
+            - PutGroupPolicy
+            - CreateUser
+            - DeactivateMFADevice
+            - DeleteVirtualMFADevice
+            - CreateAccessKey
+            - PutBucketAcl
+            - PutBucketPolicy
+            - DeletePublicAccessBlock
+            - PutBucketPublicAccessBlock
+            - DeleteBucketEncryption
+            - AuthorizeSecurityGroupIngress
+            - ModifySecurityGroupRules
+      State: ENABLED
+      Targets:
+        - Arn: !GetAtt DriftDetectorFunction.Arn
+          Id: DriftDetectorTarget
+
+  # Permission for EventBridge to invoke Lambda
+  EventBridgeInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref DriftDetectorFunction
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt DriftDetectionRule.Arn
+
+  # ── CloudWatch Log Group ─────────────────────────────────────────
+  DriftDetectorLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/security-drift-detector
+      RetentionInDays: 30
+
+Outputs:
+  LambdaFunctionArn:
+    Description: ARN of the drift detector Lambda function
+    Value: !GetAtt DriftDetectorFunction.Arn
+
+  SNSTopicArn:
+    Description: SNS topic for security alerts
+    Value: !Ref SecurityAlertTopic
+
+  ReportsBucketName:
+    Description: S3 bucket storing JSON security reports
+    Value: !Ref ReportsBucket
+
+  EventBridgeRuleName:
+    Description: EventBridge rule monitoring CloudTrail events
+    Value: !Ref DriftDetectionRule
+
+  SetupInstructions:
+    Description: Next steps after deployment
+    Value: >
+      1) Confirm SNS email subscription.
+      2) Enable CloudTrail EventBridge integration.
+      3) Run deploy.ps1 to upload Lambda code.
