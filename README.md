@@ -67,52 +67,46 @@ High – SSH Open to Internet (0.0.0.0/0)
 
 ##Architecture Diagram
 
-┌─────────────┐
-│ AWS Changes │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│ CloudTrail  │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│ EventBridge │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│ AWS Lambda  │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│ Detection   │
-│ Engine      │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│ SNS Alerts  │
-└─────────────┘
+```mermaid
+flowchart TD
+
+    A[Developer / Admin Action] --> B[CloudTrail Event]
+
+    B --> C[Amazon EventBridge]
+
+    C --> D[AWS Lambda<br/>Cloud Security Drift Detector]
+
+    D --> E[AdministratorAccess Detection]
+    D --> F[SSH Open to Internet Detection]
+    D --> G[S3 Security Policy Analysis]
+
+    E --> H[Risk Classification]
+
+    F --> H
+
+    G --> H
+
+    H --> I[Critical / High / Medium Findings]
+
+    I --> J[SNS Email Alerts]
+
+    I --> K[JSON Security Reports]
+
+```
 
 ##Screenshots
 
 Screenshot 1 – IAM Detection
-<img width="1490" height="387" alt="image" src="https://github.com/user-attachments/assets/f803ab4b-a019-4a54-9941-5313f72eae29" />
 
+<img width="1490" height="387" alt="image" src="https://github.com/user-attachments/assets/f803ab4b-a019-4a54-9941-5313f72eae29" />
 
 Screenshot 2 – Security Group Detection
 
 <img width="1483" height="512" alt="image" src="https://github.com/user-attachments/assets/4ff6d43c-3cca-4926-9697-5a0f297bc95a" />
 
-
 Screenshot 3 – Full Output
 
 <img width="1610" height="893" alt="image" src="https://github.com/user-attachments/assets/998ced7f-f746-4b14-b324-75d03a255223" />
-
-
 
 ## Author
 
