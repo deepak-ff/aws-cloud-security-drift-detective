@@ -1,0 +1,18 @@
+┌─────────────────┐
+│   CloudTrail    │──► Logs all API calls
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  EventBridge    │──► Detects misconfigurations
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Lambda Function│──► Auto-remediates issues
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  SNS Alerts     │──► Notifies security team
+└─────────────────┘
